@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ultimate UTM Builder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+.logo-container {
+  max-width: 1200px;
+  padding: 1rem;
+  margin: 0 auto;
+}
+.logo-img {
+ max-height: 40px;
+  margin: 20px 0;
+}
+
+@media (max-width: 768px) {
+.logo-img {
+max-height: 30px;
+  }
+}
+body {
+  background-color: #f8f9fa;
+  color: #212529;
+  min-width: 1200px;
+}
+.container {
+  max-width: 1200px;
+  padding: 2rem;
+  width: 100%;
+}
+
+/* Main layout and form fixes */
+      .col-md-8 {
+        /* Keep the left section width the same */
+        width: 500px;  /* Or your preferred fixed width */
+        flex: 0 0 auto;
+      }
+
+
+      .col-md-4 {
+        /* Make the right section (UTM log) wider */
+        width: 600px;  /* You can adjust this value */
+        flex: 0 0 auto;
+      }
+
+/* Form section fixes */
+.form-section {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Campaign Timing section specific fixes */
+.form-section .col-md-4 {
+  width: calc(33.333% - 20px) !important;
+  min-width: auto !important;
+  max-width: calc(33.333% - 20px) !important;
+  flex: 0 0 calc(33.333% - 20px) !important;
+  padding: 0 10px !important;
+  margin-bottom: 1rem;
+}
+
+/* General form grid fixes */
+.form-section .row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  margin: 0 -10px !important;
+  width: auto !important;
+}
+
+.form-section .col-md-6 {
+  width: calc(50% - 20px) !important;
+  flex: 0 0 calc(50% - 20px) !important;
+  max-width: calc(50% - 20px) !important;
+  padding: 0 10px !important;
+  margin-bottom: 1rem;
+}
+
+.form-section .col-12 {
+  width: calc(100% - 20px) !important;
+  flex: 0 0 calc(100% - 20px) !important;
+  max-width: calc(100% - 20px) !important;
+  padding: 0 10px !important;
+  margin-bottom: 1rem;
+}
+
+/* Form control fixes */
+.form-control, .form-select {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Form input styling */
+.form-control, .form-select {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Form label fixes */
+.form-label {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  color: #212529;
+}
+
+.form-section {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.form-section h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  color: #212529;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-select, .form-control {
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  color: #495057;
+  background-color: #fff;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.form-select:focus, .form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 4px;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.generated-utm {
+  word-break: break-all;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #495057;
+}
+
+.emoji-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  transition: transform 0.2s;
+}
+
+.emoji-button:hover {
+  transform: scale(1.2);
+}
+
+.save-emoji {
+  color: #0d6efd;
+}
+
+.delete-emoji {
+  color: #dc3545;
+}
+
+.spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.btn .spinner {
+  display: none;
+}
+
+.btn.loading .spinner {
+  display: inline-block;
+}
+
+.btn.loading .btn-text {
+  display: none;
+}
+
+      .utm-log {
+        /* Adjust the UTM log container */
+        width: 100%;
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        height: calc(100vh - 150px);
+        overflow-y: auto;
+        position: sticky;
+        top: 2rem;
+        margin-top: 2rem;
+      }
+
+.utm-log h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #212529;
+}
+
+.utm-table {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.utm-table th {
+  background-color: #f8f9fa;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.utm-table td {
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: #495057;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.utm-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.utm-actions {
+  white-space: nowrap;
+}
+
+      .utm-url {
+        /* Adjust the URL column width in the table */
+        max-width: 400px;  /* You can adjust this value */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+.col-form-label {
+  padding-top: calc(0.5rem + 1px);
+  padding-bottom: calc(0.5rem + 1px);
+}
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.notification-content {
+  background-color: #ffffff;
+  color: #212529;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid #dee2e6;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.notification.hiding {
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+.auto-button {
+  font-size: 10px !important;
+  padding: 0px 6px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+  margin-right: 8px !important;
+  background-color: #212529 !important;
+  color: white !important;
+  border: none !important;
+}
+
+.input-group-auto {
+  display: flex;
+  align-items: center;
+}
+    </style>
+
+<script>
+      // Product category dependencies
+      const subCategories = {
+        'Cooling': ['Refrigeration', 'Wine', 'Chest Freezer'],
+        'Cooking': ['Ovens', 'Cooktops', 'Freestanding', 'Companions'],
+        'Fabrice Care': ['Washing Machines', 'Dryers', 'Cabinets'],
+        'Dishwashing': [],
+        'Outdoor': ['Grills', 'Carts', 'Storage'],
+        'Ventilation': [],
+        'Accessories': ['Spare Parts', 'Accessories', 'Water Filters', 'Cleaning'],
+        'Promotions': []
+      };
+
+      // Market-Brand dependencies
+      const marketBrands = {
+        'AU': ['F&P', 'Haier', 'Haier Home', 'Home Solutions', 'DCS'],
+        'NZ': ['F&P', 'Haier', 'Haier Home', 'Home Solutions'],
+        'US': ['F&P', 'DCS'],
+        'UK': ['F&P'],
+        'CA': ['F&P', 'DCS'],
+        'SG': ['F&P'],
+        'GBL': ['F&P', 'Haier', 'Haier Home', 'Home Solutions', 'DCS'], 
+      };
+
+      // Channel dependencies
+      const channelDependencies = {
+        'Meta': {
+          channelTypes: ['Paid Social', 'Social'],
+          mediaObjectives: ['Attract', 'Engage', 'Convert', 'Retain'],
+          buyTypes: ['Reach', 'Traffic', 'Conversion', 'Engagement']
+        },
+        'Tiktok': {
+          channelTypes: ['Paid Social', 'Social'],
+          mediaObjectives: ['Attract', 'Engage', 'Convert', 'Retain'],
+          buyTypes: ['Reach', 'Traffic', 'Conversion', 'Engagement']
+        },
+        'LinkedIn': {
+          channelTypes: ['Paid Social', 'Social'],
+          mediaObjectives: ['Attract', 'Engage', 'Convert', 'Retain'],
+          buyTypes: ['Reach', 'Traffic', 'Conversion', 'Engagement']
+        },
+        'Pinterest': {
+          channelTypes: ['Paid Social', 'Social'],
+          mediaObjectives: ['Attract', 'Engage', 'Convert', 'Retain'],
+          buyTypes: ['Reach', 'Traffic', 'Conversion', 'Engagement']
+        },
+        'DV360': {
+          channelTypes: ['Display', 'Video'],
+          mediaObjectives: ['Attract', 'Engage', 'Convert', 'Retain'],
+          buyTypes: ['Reach', 'Traffic', 'Conversion', 'Engagement']
+        }
+      };
+
+      // Abbreviation mappings
+      const marketBrandAbbreviations = {
+        'AU': {
+          'F&P': 'FPAU',
+          'Haier': 'HAIAU',
+          'Haier Home': 'HHAU',
+          'Home Solutions': 'HSAU',
+          'DCS': 'DCSAU'
+        },
+        'GBL': {  // Add this block
+          'F&P': 'FPGBL',
+          'Haier': 'HAIGBL',
+          'Haier Home': 'HHGBL',
+          'Home Solutions': 'HSGBL',
+          'DCS': 'DCSGBL'
+        },
+        'NZ': {
+          'F&P': 'FPNZ',
+          'Haier': 'HAINZ',
+          'Haier Home': 'HHNZ',
+          'Home Solutions': 'HSNZ'
+        },
+                'US': {
+          'F&P': 'FPUS',
+          'DCS': 'DCSUS'
+        },
+        'UK': {
+          'F&P': 'FPUK'
+        },
+        'CA': {
+          'F&P': 'FPCA',
+          'DCS': 'DCSCA'
+        },
+        'SG': {
+          'F&P': 'FPSG'
+        }
+      };
+
+      const mediaObjectiveAbbr = {
+        'Attract': 'ATT',
+        'Engage': 'ENG',
+        'Convert': 'CON',
+        'Retain': 'RET'
+      };
+
+      const monthAbbr = {
+        'January': 'JAN',
+        'February': 'FEB',
+        'March': 'MAR',
+        'April': 'APR',
+        'May': 'MAY',
+        'June': 'JUN',
+        'July': 'JUL',
+        'August': 'AUG',
+        'September': 'SEP',
+        'October': 'OCT',
+        'November': 'NOV',
+        'December': 'DEC'
+      };
+
+      const buyTypeAbbr = {
+        'Reach': 'REACH',
+        'Traffic': 'TRAFFIC',
+        'Conversion': 'CONV',
+        'Engagement': 'ENG',
+        'Video Views': 'VIDV'
+      };
+
+      const categoryAbbr = {
+        'Cooling': 'COOL',
+        'Cooking': 'COOK',
+        'Fabrice Care': 'FAB',
+        'Dishwashing': 'DISH',
+        'Outdoor': 'OUT',
+        'Ventilation': 'VENT',
+        'Accessories': 'ACC',
+        'Promotions': 'PROMO'
+      };
+
+      const subCategoryAbbr = {
+        'Refrigeration': 'REF',
+        'Wine': 'WINE',
+        'Chest Freezer': 'FREEZE',
+        'Ovens': 'OVEN',
+        'Cooktops': 'CTOP',
+        'Freestanding': 'FREE',
+        'Companions': 'COMP',
+        'Washing Machines': 'WASH',
+        'Dryers': 'DRY',
+        'Cabinets': 'CAB',
+        'Grills': 'GRILL',
+        'Carts': 'CART',
+        'Storage': 'STOR',
+        'Spare Parts': 'SPARE',
+        'Accessories': 'ACC',
+        'Water Filters': 'FILT',
+        'Cleaning': 'CLEAN'
+      };
+
+      let utmLogData = [];
+
+// Core Functions
+      function updateSubCategories() {
+        const category = document.getElementById('productCategory').value;
+        const subCategorySelect = document.getElementById('subCategory');
+        const options = subCategories[category] || [];
+        
+        subCategorySelect.innerHTML = '<option value="">Select...</option>';
+        options.forEach(option => {
+          const optionElement = document.createElement('option');
+          optionElement.value = option;
+          optionElement.textContent = option;
+          subCategorySelect.appendChild(optionElement);
+        });
+      }
+
+      function updateBrandOptions() {
+        const market = document.getElementById('market').value;
+        const brandSelect = document.getElementById('brand');
+        
+        brandSelect.innerHTML = '<option value="">Select...</option>';
+        if (market && marketBrands[market]) {
+          marketBrands[market].forEach(brand => {
+            const option = document.createElement('option');
+            option.value = brand;
+            option.textContent = brand;
+            brandSelect.appendChild(option);
+          });
+        }
+      }
+
+      function updateChannelDependencies() {
+        const channel = document.getElementById('channel').value;
+        const channelTypeSelect = document.getElementById('channelType');
+        const mediaObjectiveSelect = document.getElementById('mediaObjective');
+        const buyTypeSelect = document.getElementById('buyType');
+        
+        // Reset and update channel type options
+        channelTypeSelect.innerHTML = '<option value="">Select...</option>';
+        if (channel && channelDependencies[channel]) {
+          channelDependencies[channel].channelTypes.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            channelTypeSelect.appendChild(option);
+          });
+        }
+
+        // Update media objective options
+        mediaObjectiveSelect.innerHTML = '<option value="">Select...</option>';
+        if (channel && channelDependencies[channel]) {
+          channelDependencies[channel].mediaObjectives.forEach(objective => {
+            const option = document.createElement('option');
+            option.value = objective;
+            option.textContent = objective;
+            mediaObjectiveSelect.appendChild(option);
+          });
+        }
+
+        // Update buy type options
+        buyTypeSelect.innerHTML = '<option value="">Select...</option>';
+        if (channel && channelDependencies[channel]) {
+          channelDependencies[channel].buyTypes.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            buyTypeSelect.appendChild(option);
+          });
+        }
+      }
+
+      function generateCampaignName() {
+        const market = document.getElementById('market').value;
+        const brand = document.getElementById('brand').value;
+        const mediaObjective = document.getElementById('mediaObjective').value;
+        const financialYear = document.getElementById('financialYear').value;
+        const quarter = document.getElementById('quarter').value;
+        const month = document.getElementById('month').value;
+
+        if (!market || !brand || !mediaObjective || !financialYear || !quarter || !month) {
+          showNotification('Please fill in all required fields first');
+          return;
+        }
+
+        const marketBrandCode = marketBrandAbbreviations[market][brand];
+        const objectiveCode = mediaObjectiveAbbr[mediaObjective];
+        const monthCode = monthAbbr[month];
+
+        const campaignName = `${marketBrandCode}_${objectiveCode}_${financialYear}_${quarter}_${monthCode}`;
+        document.getElementById('campaignName').value = campaignName;
+        
+        // Trigger UTM fields update
+        updateUTMFields();
+      }
+
+      function generateAdSetName() {
+        const mediaObjective = document.getElementById('mediaObjective').value;
+        const buyType = document.getElementById('buyType').value;
+        const category = document.getElementById('productCategory').value;
+        const subCategory = document.getElementById('subCategory').value;
+
+        if (!mediaObjective || !buyType) {
+          showNotification('Please select Media Objective and Buy Type first');
+          return;
+        }
+
+        const objectiveCode = mediaObjectiveAbbr[mediaObjective];
+        const buyTypeCode = buyTypeAbbr[buyType];
+        const categoryCode = category ? categoryAbbr[category] || '' : '';
+        const subCategoryCode = subCategory ? '_' + (subCategoryAbbr[subCategory] || '') : '';
+        
+        const adSetName = `${objectiveCode}_${buyTypeCode}${categoryCode ? '_' + categoryCode : ''}${subCategoryCode}`;
+        document.getElementById('adSet').value = adSetName;
+      }
+
+      function toggleOtherChannel() {
+        const channelSelect = document.getElementById('channel');
+        const otherChannelDiv = document.getElementById('otherChannelDiv');
+        if (channelSelect.value === 'other') {
+          otherChannelDiv.style.display = 'block';
+        } else {
+          otherChannelDiv.style.display = 'none';
+        }
+        updateUTMFields();
+      }
+
+      function toggleManualUtm() {
+        const isManual = document.getElementById('manualUtmToggle').checked;
+        const utmFields = ['utmSource', 'utmMedium', 'utmCampaign', 'utmContent'];
+        
+        utmFields.forEach(fieldId => {
+          const field = document.getElementById(fieldId);
+          field.readOnly = !isManual;
+          if (!isManual) {
+            updateUTMFields();
+          }
+        });
+
+        const smallTexts = document.querySelectorAll('.text-muted');
+        smallTexts.forEach(small => {
+          if (small.textContent.includes('Auto-populated')) {
+            small.textContent = isManual ? 'Manual input enabled' : small.textContent.replace('Manual input enabled', 'Auto-populated from');
+          }
+        });
+      }
+
+      function updateUTMFields() {
+        const isManual = document.getElementById('manualUtmToggle').checked;
+        if (isManual) return;
+
+        const channel = document.getElementById('channel');
+        const otherChannel = document.getElementById('otherChannel');
+        const channelType = document.getElementById('channelType');
+        const campaignName = document.getElementById('campaignName');
+        const adName = document.getElementById('adName');
+        
+        const channelValue = channel.value === 'other' ? otherChannel.value : channel.value;
+        
+        document.getElementById('utmSource').value = formatUtmValue(channelValue);
+        document.getElementById('utmMedium').value = formatUtmValue(channelType.value);
+        document.getElementById('utmCampaign').value = formatUtmValue(campaignName.value);
+        document.getElementById('utmContent').value = formatUtmValue(adName.value);
+      }
+
+      function showNotification(message, duration = 3000) {
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        
+        notificationMessage.textContent = message;
+        notification.style.display = 'block';
+        notification.classList.remove('hiding');
+        
+        setTimeout(() => {
+          notification.classList.add('hiding');
+          setTimeout(() => {
+            notification.style.display = 'none';
+            notification.classList.remove('hiding');
+          }, 300);
+        }, duration);
+      }
+
+      function formatUtmValue(value) {
+        if (!value) return '';
+        return value.toLowerCase()
+                   .replace(/\s+/g, '_')
+                   .replace(/[^a-z0-9_-]/g, '');
+      }
+
+// UTM Generation and Management Functions
+      function getFormData() {
+        return {
+          baseUrl: document.getElementById('baseUrl').value,
+          channel: document.getElementById('channel').value === 'other' ? 
+                  document.getElementById('otherChannel').value : 
+                  document.getElementById('channel').value,
+          campaignName: document.getElementById('campaignName').value,
+          adName: document.getElementById('adName').value,
+          adSet: document.getElementById('adSet').value,
+          medium: document.getElementById('channelType').value.toLowerCase(),
+          market: document.getElementById('market').value,
+          brand: document.getElementById('brand').value,
+          productCategory: document.getElementById('productCategory').value,
+          subCategory: document.getElementById('subCategory').value,
+          financialYear: document.getElementById('financialYear').value,
+          quarter: document.getElementById('quarter').value,
+          month: document.getElementById('month').value,
+          mediaObjective: document.getElementById('mediaObjective').value,
+          buyType: document.getElementById('buyType').value,
+          channelType: document.getElementById('channelType').value
+        };
+      }
+
+function generateUTM() {
+        const formData = getFormData();
+
+        // Get UTM values
+        const utmSource = document.getElementById('utmSource').value.toLowerCase();
+        const utmMedium = document.getElementById('utmMedium').value.toLowerCase();
+        const utmCampaign = document.getElementById('utmCampaign').value.toLowerCase();
+        const utmContent = document.getElementById('utmContent').value.toLowerCase();
+        const utmTerm = document.getElementById('utmTerm').value.toLowerCase();
+
+        if (!formData.baseUrl) {
+          showNotification('Please enter a Base URL');
+          return;
+        }
+
+        if (!utmSource || !utmMedium || !utmCampaign) {
+          showNotification('Please ensure Source, Medium, and Campaign fields are filled');
+          return;
+        }
+
+        try {
+          const url = new URL(formData.baseUrl.toLowerCase());
+          
+          // Add required UTM parameters
+          url.searchParams.set('utm_source', utmSource);
+          url.searchParams.set('utm_medium', utmMedium);
+          url.searchParams.set('utm_campaign', utmCampaign);
+          
+          // Add optional UTM parameters if they exist
+          if (utmContent) {
+            url.searchParams.set('utm_content', utmContent);
+          }
+          if (utmTerm) {
+            url.searchParams.set('utm_term', utmTerm);
+          }
+
+          // Show the generated UTM section and set the URL
+          const generatedUtm = document.getElementById('generatedUtm');
+          const generatedUtmSection = document.getElementById('generatedUtmSection');
+          
+          generatedUtm.textContent = url.toString();
+          generatedUtmSection.style.display = 'block';
+          
+          // Scroll the generated UTM into view
+          generatedUtmSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        } catch (error) {
+          showNotification('Invalid URL format. Please check the Base URL.');
+        }
+      }
+
+        function completeSession() {
+          const endSaveButton = document.getElementById('endSaveButton');
+          const endSaveSpinner = document.getElementById('endSaveSpinner');
+
+          // Prevent multiple clicks by disabling the button
+          endSaveButton.disabled = true;
+          endSaveSpinner.style.display = 'inline-block'; // Show the spinner
+
+          // Simulating saving process (replace with actual save logic)
+          if (utmLogData.length === 0) {
+            showNotification('No UTMs to save. Please generate and save at least one UTM before completing the session.');
+            
+            // Re-enable the button if there's nothing to save
+            endSaveButton.disabled = false;
+            endSaveSpinner.style.display = 'none'; // Hide the spinner
+            return;
+          }
+
+          google.script.run
+            .withSuccessHandler(function(response) {
+              if (response.success) {
+                showNotification(response.message);
+                clearForm();
+              } else {
+                showNotification('Error: ' + response.message);
+              }
+              
+              // Re-enable the button and hide the spinner after completion
+              endSaveButton.disabled = false;
+              endSaveSpinner.style.display = 'none';
+            })
+            .withFailureHandler(function(error) {
+              showNotification('Error saving session: ' + error.message);
+
+              // Re-enable the button and hide the spinner after failure
+              endSaveButton.disabled = false;
+              endSaveSpinner.style.display = 'none';
+            })
+            .appendToUTMLog(utmLogData);
+        }
+
+      function saveUTM() {
+        const formData = getFormData();
+        
+        // Add metadata
+        formData.timestamp = new Date().toLocaleString();
+        formData.creator = 'Unknown User';
+        
+        // Add UTM parameters
+        formData.utmSource = document.getElementById('utmSource').value;
+        formData.utmMedium = document.getElementById('utmMedium').value;
+        formData.utmCampaign = document.getElementById('utmCampaign').value;
+        formData.utmContent = document.getElementById('utmContent').value;
+        formData.utmTerm = document.getElementById('utmTerm').value;
+        formData.utmString = document.getElementById('generatedUtm').textContent;
+        
+        if (!formData.utmString) {
+          showNotification('Please generate a UTM URL first');
+          return;
+        }
+
+        // Check for duplicate UTM string
+        const isDuplicate = utmLogData.some(data => data.utmString === formData.utmString);
+        if (isDuplicate) {
+          showNotification('This UTM has already been saved');
+          return;
+        }
+
+        // Add to local storage
+        utmLogData.push(formData);
+
+        // Update the UI
+        const utmLog = document.getElementById('utmLog');
+        const newRow = document.createElement('tr');
+        
+          newRow.innerHTML = `
+            <td class="utm-actions">
+              <button class="btn btn-sm btn-outline-primary me-2 small-btn" onclick="copyUTM(this)">💾</button>
+              <button class="btn btn-sm btn-outline-danger small-btn" onclick="deleteUTM(this)">🚫</button>
+            </td>
+            <td>${formData.timestamp}</td>
+            <td>${formData.creator}</td>
+            <td>${formData.utmCampaign}</td>
+            <td class="utm-url" title="${formData.utmString}">${formData.utmString}</td>
+          `;
+        
+        utmLog.appendChild(newRow);
+        utmLog.parentElement.scrollTop = utmLog.parentElement.scrollHeight;
+        
+        showNotification('UTM saved successfully');
+      }
+
+      function copyUTM(button) {
+        const utmString = button.closest('tr').querySelector('.utm-url').title;
+        navigator.clipboard.writeText(utmString)
+          .then(() => showNotification('UTM copied to clipboard!'))
+          .catch(err => showNotification('Failed to copy UTM: ' + err));
+      }
+
+      function deleteUTM(button) {
+        const row = button.closest('tr');
+        const utmString = row.querySelector('.utm-url').title;
+        utmLogData = utmLogData.filter(data => data.utmString !== utmString);
+        row.remove();
+        showNotification('UTM deleted successfully');
+      }
+
+      function copyToClipboard() {
+        const utmString = document.getElementById('generatedUtm').textContent;
+        navigator.clipboard.writeText(utmString)
+          .then(() => showNotification('UTM copied to clipboard!'))
+          .catch(err => showNotification('Failed to copy UTM: ' + err));
+      }
+
+      function clearForm() {
+        // Clear the UTM log table
+        document.getElementById('utmLog').innerHTML = '';
+        
+        // Clear stored data
+        utmLogData = [];
+        
+        // Reset all form fields
+        document.querySelectorAll('.form-select, .form-control').forEach(element => {
+          element.value = '';
+        });
+        
+        // Hide the generated UTM section
+        document.getElementById('generatedUtmSection').style.display = 'none';
+        
+        // Reset any other relevant UI elements
+        document.getElementById('utmSource').value = '';
+        document.getElementById('utmMedium').value = '';
+        document.getElementById('utmCampaign').value = '';
+        document.getElementById('utmContent').value = '';
+        document.getElementById('utmTerm').value = '';
+
+        // Reset other channel div
+        document.getElementById('otherChannelDiv').style.display = 'none';
+        
+        // Reset UTM toggle
+        document.getElementById('manualUtmToggle').checked = false;
+        toggleManualUtm();
+      }
+
+// Event Listeners
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add market change listener
+        document.getElementById('market').addEventListener('change', updateBrandOptions);
+        
+        // Add channel change listener
+        document.getElementById('channel').addEventListener('change', function() {
+          updateChannelDependencies();
+          toggleOtherChannel();
+        });
+
+        // Add event listeners for UTM field updates
+        document.getElementById('channel').addEventListener('change', updateUTMFields);
+        document.getElementById('otherChannel').addEventListener('input', updateUTMFields);
+        document.getElementById('channelType').addEventListener('change', updateUTMFields);
+        document.getElementById('campaignName').addEventListener('input', updateUTMFields);
+        document.getElementById('adName').addEventListener('input', updateUTMFields);
+
+        // Add input formatters for manual UTM fields
+        document.querySelectorAll('#utmSource, #utmMedium, #utmCampaign, #utmContent, #utmTerm')
+          .forEach(input => {
+            input.addEventListener('input', function() {
+              if (document.getElementById('manualUtmToggle').checked) {
+                this.value = formatUtmValue(this.value);
+              }
+            });
+          });
+        
+        // Add Auto buttons to campaign structure section
+        function createAutoButton(onclick) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'auto-button btn btn-sm';
+          button.textContent = 'Auto';
+          button.onclick = onclick;
+          return button;
+        }
+function saveToUTMLog(data) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName('UTM Log');
+    
+    if (!sheet) {
+      throw new Error('UTM Log sheet not found');
+    }
+    
+    // Get the headers from the first row
+    const headers = [
+      'Timestamp', 'Creator', 'Market', 'Brand', 'Category', 'SubCategory',
+      'Channel', 'ChannelType', 'MediaObjective', 'BuyType', 'CampaignName',
+      'AdSetName', 'AdName', 'BaseURL', 'UTMSource', 'UTMMedium', 'UTMCampaign',
+      'UTMContent', 'UTMTerm', 'FullUTMURL'
+    ];
+    
+    // Convert data objects to arrays in the correct order
+    const rows = data.map(item => headers.map(header => item[header] || ''));
+    
+    // Add headers if sheet is empty
+    if (sheet.getLastRow() === 0) {
+      sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    }
+    
+    // Append the new data
+    const startRow = sheet.getLastRow() + 1;
+    sheet.getRange(startRow, 1, rows.length, headers.length).setValues(rows);
+    
+    return true;
+  } catch (error) {
+    throw new Error('Failed to save to UTM Log: ' + error.message);
+  }
+}
+
+        // Campaign Name Auto button
+        const campaignNameDiv = document.getElementById('campaignName').parentNode;
+        const campaignNameWrapper = document.createElement('div');
+        campaignNameWrapper.className = 'input-group-auto';
+        
+        // Move the existing input
+        const campaignNameInput = document.getElementById('campaignName');
+        campaignNameDiv.removeChild(campaignNameInput);
+        
+        // Add button and input to wrapper
+        campaignNameWrapper.appendChild(createAutoButton(generateCampaignName));
+        campaignNameWrapper.appendChild(campaignNameInput);
+        
+        // Add wrapper to original div
+        campaignNameDiv.appendChild(campaignNameWrapper);
+
+        // Ad Set Auto button
+        const adSetDiv = document.getElementById('adSet').parentNode;
+        const adSetWrapper = document.createElement('div');
+        adSetWrapper.className = 'input-group-auto';
+        
+        // Move the existing input
+        const adSetInput = document.getElementById('adSet');
+        adSetDiv.removeChild(adSetInput);
+        
+        // Add button and input to wrapper
+        adSetWrapper.appendChild(createAutoButton(generateAdSetName));
+        adSetWrapper.appendChild(adSetInput);
+        
+        // Add wrapper to original div
+        adSetDiv.appendChild(adSetWrapper);
+      });
+</script>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">Ultimate UTM Builder</h1>
+      <div id="notification" class="notification" style="display: none;">
+        <div class="notification-content">
+          <span id="notification-message"></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8">
+          <div class="form-section">
+            <h3>Campaign Organization</h3>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="market" class="form-label">Market</label>
+              <select class="form-select" id="market" required>
+                <option value="">Select...</option>
+                <option value="AU">AU</option>
+                <option value="NZ">NZ</option>
+                <option value="US">US</option>
+                <option value="UK">UK</option>
+                <option value="SG">SG</option>
+                <option value="CA">CA</option>
+                <option value="GBL">Global</option>  <!-- Add this line -->
+              </select>
+              </div>
+              <div class="col-md-6">
+                <label for="brand" class="form-label">Brand</label>
+                <select class="form-select" id="brand" required>
+                  <option value="">Select...</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="productCategory" class="form-label">Product Category</label>
+                <select class="form-select" id="productCategory" onchange="updateSubCategories()" required>
+                  <option value="">Select...</option>
+                  <option value="Cooling">Cooling</option>
+                  <option value="Cooking">Cooking</option>
+                  <option value="Fabrice Care">Fabrice Care</option>
+                  <option value="Dishwashing">Dishwashing</option>
+                  <option value="Outdoor">Outdoor</option>
+                  <option value="Ventilation">Ventilation</option>
+                  <option value="Accessories">Accessories</option>
+                  <option value="Promotions">Promotions</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="subCategory" class="form-label">Sub Category</label>
+                <select class="form-select" id="subCategory">
+                  <option value="">Select...</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Campaign Timing</h3>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="financialYear" class="form-label">Financial Year</label>
+                <select class="form-select" id="financialYear" required>
+                  <option value="">Select...</option>
+                  <option value="FY24">FY24</option>
+                  <option value="FY25">FY25</option>
+                  <option value="FY26">FY26</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="quarter" class="form-label">Quarter</label>
+                <select class="form-select" id="quarter" required>
+                  <option value="">Select...</option>
+                  <option value="Q1">Q1</option>
+                  <option value="Q2">Q2</option>
+                  <option value="Q3">Q3</option>
+                  <option value="Q4">Q4</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="month" class="form-label">Month</label>
+                <select class="form-select" id="month" required>
+                  <option value="">Select...</option>
+                  <option value="January">January</option>
+                  <option value="February">February</option>
+                  <option value="March">March</option>
+                  <option value="April">April</option>
+                  <option value="May">May</option>
+                  <option value="June">June</option>
+                  <option value="July">July</option>
+                  <option value="August">August</option>
+                  <option value="September">September</option>
+                  <option value="October">October</option>
+                  <option value="November">November</option>
+                  <option value="December">December</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Campaign Details</h3>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="channel" class="form-label">Channel</label>
+                <select class="form-select" id="channel" required>
+                  <option value="">Select...</option>
+                  <option value="Meta">Meta</option>
+                  <option value="Tiktok">Tiktok</option>
+                  <option value="LinkedIn">LinkedIn</option>
+                  <option value="Pinterest">Pinterest</option>
+                  <option value="DV360">DV360</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-6" id="otherChannelDiv" style="display: none;">
+                <label for="otherChannel" class="form-label">Other Channel</label>
+                <input type="text" class="form-control" id="otherChannel">
+              </div>
+              <div class="col-md-6">
+                <label for="channelType" class="form-label">Channel Type</label>
+                <select class="form-select" id="channelType" required>
+                  <option value="">Select...</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="mediaObjective" class="form-label">Media Objective</label>
+                <select class="form-select" id="mediaObjective" required>
+                  <option value="">Select...</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="buyType" class="form-label">Buy Type</label>
+                <select class="form-select" id="buyType" required>
+                  <option value="">Select...</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Campaign Structure</h3>
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="baseUrl" class="form-label">Base URL</label>
+                <input type="url" class="form-control" id="baseUrl" required>
+              </div>
+              <div class="col-md-6">
+                <label for="campaignName" class="form-label">Campaign Name</label>
+                <input type="text" class="form-control" id="campaignName" required>
+              </div>
+              <div class="col-md-6">
+                <label for="adSet" class="form-label">Ad Set</label>
+                <input type="text" class="form-control" id="adSet">
+              </div>
+              <div class="col-md-6">
+                <label for="adName" class="form-label">Ad Name</label>
+                <input type="text" class="form-control" id="adName">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>UTM Parameters</h3>
+            <div class="row g-3">
+              <div class="col-12 mb-3">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="manualUtmToggle" onchange="toggleManualUtm()">
+                  <label class="form-check-label" for="manualUtmToggle">Enable manual UTM parameter input</label>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <label for="utmSource" class="form-label">UTM Source</label>
+                <input type="text" class="form-control" id="utmSource" readonly>
+                <small class="text-muted">Auto-populated from Channel</small>
+              </div>
+              <div class="col-md-6">
+                <label for="utmMedium" class="form-label">UTM Medium</label>
+                <input type="text" class="form-control" id="utmMedium" readonly>
+                <small class="text-muted">Auto-populated from Channel Type</small>
+              </div>
+              <div class="col-md-6">
+                <label for="utmCampaign" class="form-label">UTM Campaign</label>
+                <input type="text" class="form-control" id="utmCampaign" readonly>
+                <small class="text-muted">Auto-populated from Campaign Name</small>
+              </div>
+              <div class="col-md-6">
+                <label for="utmContent" class="form-label">UTM Content</label>
+                <input type="text" class="form-control" id="utmContent" readonly>
+                <small class="text-muted">Auto-populated from Ad Name</small>
+              </div>
+              <div class="col-md-6">
+                <label for="utmTerm" class="form-label">UTM Term</label>
+                <input type="text" class="form-control" id="utmTerm">
+                <small class="text-muted">Manual input field</small>
+              </div>
+              
+              <div class="col-12">
+                <button type="button" class="btn btn-primary" onclick="generateUTM()">Generate UTM</button>
+              </div>
+
+<div id="generatedUtmSection" style="display: none;" class="col-12 mt-4">
+  <hr class="mb-4">
+  <label class="form-label">Generated UTM URL:</label>
+  <div class="generated-utm mb-3" id="generatedUtm"></div>
+  <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-success" onclick="saveUTM()">Save UTM</button>
+    </div>
+      <button type="button" class="btn btn-primary" id="endSaveButton" onclick="completeSession()">
+        <span id="endSaveSpinner" class="spinner-border spinner-border-sm me-2" style="display: none;"></span>
+        End & Save Session
+      </button>  
+
+    </div>
+</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="utm-log">
+            <h3>UTM Log</h3>
+            <table class="utm-table">
+              <thead>
+                <tr>
+                  <th>Actions</th> <!-- Actions column moved to the left -->
+                  <th>Timestamp</th>
+                  <th>Created By</th>
+                  <th>Campaign</th>
+                  <th>UTM URL</th>
+                </tr>
+              </thead>
+              <tbody id="utmLog">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Re-initialize icons after adding new rows
+        const originalSaveUTM = window.saveUTM;
+        window.saveUTM = function() {
+          originalSaveUTM.apply(this, arguments);
+          lucide.createIcons();
+        };
+      });
+    </script>
+  </body>
+</html>
+
+
+
