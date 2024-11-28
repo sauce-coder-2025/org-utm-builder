@@ -5,14 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>F&P Ultimate UTM Builder</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Environment Variables will be replaced during build -->
-    <script>
-        const CONFIG = {
-            WEBHOOK_URL: 'YOUR_WEBHOOK_URL',
-            WEBHOOK_SECRET: 'YOUR_WEBHOOK_SECRET',
-            VERSION: '2.0.0'
-        };
-    </script>
     <style>
         .logo-container {
             max-width: 1200px;
@@ -170,6 +162,7 @@
                             </div>
                         </div>
                     </div>
+
                     <!-- Campaign Timing Section -->
                     <div class="form-section">
                         <h3>Campaign Timing</h3>
@@ -213,8 +206,7 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Campaign Details Section -->
+<!-- Campaign Details Section -->
                     <div class="form-section">
                         <h3>Campaign Details</h3>
                         <div class="row g-3">
@@ -254,6 +246,7 @@
                             </div>
                         </div>
                     </div>
+
                     <!-- Campaign Structure Section -->
                     <div class="form-section">
                         <h3>Campaign Structure</h3>
@@ -282,8 +275,7 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- UTM Parameters Section -->
+<!-- UTM Parameters Section -->
                     <div class="form-section">
                         <h3>UTM Parameters</h3>
                         <div class="row g-3">
@@ -361,8 +353,10 @@
             </div>
         </div>
     </div>
+
+    <!-- Start of JavaScript -->
     <script>
-        // Constants and Data Mappings
+// Constants and Data Mappings
         const subCategories = {
             'Cooling': ['Refrigeration', 'Wine', 'Chest Freezer'],
             'Cooking': ['Ovens', 'Cooktops', 'Freestanding', 'Companions'],
@@ -382,25 +376,6 @@
             'CA': ['F&P', 'DCS'],
             'SG': ['F&P'],
             'GBL': ['F&P', 'Haier', 'Haier Home', 'Home Solutions', 'DCS']
-        };
-        const subCategoryAbbr = {
-            'Refrigeration': 'REF',
-            'Wine': 'WINE',
-            'Chest Freezer': 'FREEZE',
-            'Ovens': 'OVEN',
-            'Cooktops': 'CTOP',
-            'Freestanding': 'FREE',
-            'Companions': 'COMP',
-            'Washing Machines': 'WASH',
-            'Dryers': 'DRY',
-            'Cabinets': 'CAB',
-            'Grills': 'GRILL',
-            'Carts': 'CART',
-            'Storage': 'STOR',
-            'Spare Parts': 'SPARE',
-            'Accessories': 'ACC',
-            'Water Filters': 'FILT',
-            'Cleaning': 'CLEAN'
         };
 
         const channelDependencies = {
@@ -473,7 +448,27 @@
             'Accessories': 'ACC',
             'Promotions': 'PROMO'
         };
-        // Core Functions
+
+        const subCategoryAbbr = {
+            'Refrigeration': 'REF',
+            'Wine': 'WINE',
+            'Chest Freezer': 'FREEZE',
+            'Ovens': 'OVEN',
+            'Cooktops': 'CTOP',
+            'Freestanding': 'FREE',
+            'Companions': 'COMP',
+            'Washing Machines': 'WASH',
+            'Dryers': 'DRY',
+            'Cabinets': 'CAB',
+            'Grills': 'GRILL',
+            'Carts': 'CART',
+            'Storage': 'STOR',
+            'Spare Parts': 'SPARE',
+            'Accessories': 'ACC',
+            'Water Filters': 'FILT',
+            'Cleaning': 'CLEAN'
+        };
+// Authentication Functions
         function authenticate() {
             const email = document.getElementById('email-input').value;
             if (email && email.endsWith('@fisherpaykel.com')) {
@@ -497,99 +492,7 @@
             }
         }
 
-        function saveUTM() {
-            // Get user info
-            const user = JSON.parse(localStorage.getItem('utmBuilderUser'));
-            if (!user) {
-                showNotification('Please log in first');
-                return;
-            }
-        
-            // Get current date/time
-            const timestamp = new Date().toLocaleString();
-            
-            // Get the UTM string
-            const utmString = document.getElementById('generatedUtm').textContent;
-            if (!utmString) {
-                showNotification('Please generate a UTM URL first');
-                return;
-            }
-        
-            // Get campaign name
-            const campaignName = document.getElementById('utmCampaign').value;
-        
-            // Create table row
-            const utmLog = document.getElementById('utmLog');
-            const newRow = document.createElement('tr');
-            
-            newRow.innerHTML = `
-                <td class="utm-actions">
-                    <button class="btn btn-sm btn-outline-primary me-2 small-btn" onclick="copyUTM(this)">💾</button>
-                    <button class="btn btn-sm btn-outline-danger small-btn" onclick="deleteUTM(this)">🚫</button>
-                </td>
-                <td>${timestamp}</td>
-                <td>${user.name}</td>
-                <td>${campaignName}</td>
-                <td class="utm-url" title="${utmString}">${utmString}</td>
-            `;
-            
-            utmLog.appendChild(newRow);
-            showNotification('UTM saved successfully');
-        
-            // Scroll the UTM log to show the new entry
-            utmLog.parentElement.scrollTop = utmLog.parentElement.scrollHeight;
-        }
-
-            // Collect form data
-            const formData = {
-                creator: user,
-                market: document.getElementById('market').value,
-                brand: document.getElementById('brand').value,
-                productCategory: document.getElementById('productCategory').value,
-                subCategory: document.getElementById('subCategory').value,
-                financialYear: document.getElementById('financialYear').value,
-                quarter: document.getElementById('quarter').value,
-                month: document.getElementById('month').value,
-                channel: document.getElementById('channel').value === 'other' ? 
-                        document.getElementById('otherChannel').value : 
-                        document.getElementById('channel').value,
-                channelType: document.getElementById('channelType').value,
-                mediaObjective: document.getElementById('mediaObjective').value,
-                buyType: document.getElementById('buyType').value,
-                baseUrl: document.getElementById('baseUrl').value,
-                campaignName: document.getElementById('campaignName').value,
-                adName: document.getElementById('adName').value,
-                utmString: document.getElementById('generatedUtm').textContent,
-                utmSource: document.getElementById('utmSource').value,
-                utmMedium: document.getElementById('utmMedium').value,
-                utmCampaign: document.getElementById('utmCampaign').value,
-                utmContent: document.getElementById('utmContent').value,
-                utmTerm: document.getElementById('utmTerm').value,
-                secretKey: CONFIG.WEBHOOK_SECRET
-            };
-
-            try {
-                const response = await fetch(CONFIG.WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    showNotification('UTM saved successfully');
-                    addToUTMLog(formData);
-                } else {
-                    showNotification('Error: ' + (result.error || 'Failed to save UTM'));
-                }
-            } catch (error) {
-                showNotification('Error saving UTM: ' + error.message);
-                console.error('Save UTM error:', error);
-            }
-        }
-
+        // Form Update Functions
         function updateSubCategories() {
             const category = document.getElementById('productCategory').value;
             const subCategorySelect = document.getElementById('subCategory');
@@ -618,6 +521,7 @@
                 });
             }
         }
+
         function updateChannelDependencies() {
             const channel = document.getElementById('channel').value;
             const channelTypeSelect = document.getElementById('channelType');
@@ -645,6 +549,7 @@
             updateSelect(buyTypeSelect, channelConfig.buyTypes);
         }
 
+        // Generation Functions
         function generateCampaignName() {
             const market = document.getElementById('market').value;
             const brand = document.getElementById('brand').value;
@@ -687,7 +592,7 @@
             const adSetName = `${objectiveCode}_${buyTypeCode}${categoryCode ? '_' + categoryCode : ''}${subCategoryCode}`;
             document.getElementById('adSet').value = adSetName;
         }
-
+// Toggle Functions
         function toggleOtherChannel() {
             const channelSelect = document.getElementById('channel');
             const otherChannelDiv = document.getElementById('otherChannelDiv');
@@ -711,6 +616,8 @@
                 }
             });
         }
+
+        // UTM Handling Functions
         function updateUTMFields() {
             const isManual = document.getElementById('manualUtmToggle').checked;
             if (isManual) return;
@@ -768,7 +675,7 @@
                 showNotification('Invalid URL format. Please check the Base URL.');
             }
         }
-
+// UI Functions
         function showNotification(message, duration = 3000) {
             const notification = document.getElementById('notification');
             const notificationMessage = document.getElementById('notification-message');
@@ -793,33 +700,49 @@
                 .catch(err => showNotification('Failed to copy UTM: ' + err.message));
         }
 
-        function addToUTMLog(utmData) {
+        // UTM Management Functions
+        function saveUTM() {
+            const user = JSON.parse(localStorage.getItem('utmBuilderUser'));
+            if (!user) {
+                showNotification('Please log in first');
+                return;
+            }
+
+            const timestamp = new Date().toLocaleString();
+            const utmString = document.getElementById('generatedUtm').textContent;
+            
+            if (!utmString) {
+                showNotification('Please generate a UTM URL first');
+                return;
+            }
+
+            const campaignName = document.getElementById('utmCampaign').value;
             const utmLog = document.getElementById('utmLog');
             const newRow = document.createElement('tr');
             
             newRow.innerHTML = `
                 <td class="utm-actions">
                     <button class="btn btn-sm btn-outline-primary me-2 small-btn" onclick="copyUTM(this)">💾</button>
+                    <button class="btn btn-sm btn-outline-danger small-btn" onclick="deleteUTM(this)">🚫</button>
                 </td>
-                <td>${new Date().toLocaleString()}</td>
-                <td>${utmData.creator.name}</td>
-                <td>${utmData.utmCampaign}</td>
-                <td class="utm-url" title="${utmData.utmString}">${utmData.utmString}</td>
+                <td>${timestamp}</td>
+                <td>${user.name}</td>
+                <td>${campaignName}</td>
+                <td class="utm-url" title="${utmString}">${utmString}</td>
             `;
             
             utmLog.appendChild(newRow);
+            showNotification('UTM saved successfully');
             utmLog.parentElement.scrollTop = utmLog.parentElement.scrollHeight;
         }
 
         function copyUTM(button) {
-            // This function should already exist in your code
             const utmString = button.closest('tr').querySelector('.utm-url').title;
             navigator.clipboard.writeText(utmString)
                 .then(() => showNotification('UTM copied to clipboard!'))
                 .catch(err => showNotification('Failed to copy UTM: ' + err.message));
         }
-        
-        // Add this new function right after copyUTM
+
         function deleteUTM(button) {
             const row = button.closest('tr');
             row.remove();
@@ -849,5 +772,3 @@
     </script>
 </body>
 </html>
-    
-                    
