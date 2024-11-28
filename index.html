@@ -670,7 +670,7 @@
             }));
         
             // Send to Google Sheet
-            fetch('YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL', {
+            fetch('https://script.google.com/macros/s/AKfycbw981evD91sm2IP6NHdRNcG4BZlxOIns9Nrsl_zkWrGjWeZ2RkXRc19k6bfduwP1gEEow/exec', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -754,39 +754,55 @@
         }
 
         // UTM Management Functions
-        function saveUTM() {
-            const user = JSON.parse(localStorage.getItem('utmBuilderUser'));
-            if (!user) {
-                showNotification('Please log in first');
-                return;
+        function doPost(e) {
+          try {
+            // Parse the incoming data
+            const data = JSON.parse(e.postData.contents);
+            
+            // Get the spreadsheet and sheet
+            const ss = SpreadsheetApp.getActiveSpreadsheet();
+            const sheet = ss.getSheetByName('UTM Log');
+            
+            if (!sheet) {
+              throw new Error('UTM Log sheet not found');
             }
-
-            const timestamp = new Date().toLocaleString();
-            const utmString = document.getElementById('generatedUtm').textContent;
+        
+            // Add data to sheet
+            sheet.appendRow([
+              data.timestamp,
+              data.creator,
+              data.creatorEmail,
+              data.market,
+              data.brand,
+              data.productCategory,
+              data.subCategory,
+              data.financialYear,
+              data.quarter,
+              data.month,
+              data.channel,
+              data.channelType,
+              data.mediaObjective,
+              data.buyType,
+              data.baseUrl,
+              data.campaignName,
+              data.adName,
+              data.utmString,
+              data.utmSource,
+              data.utmMedium,
+              data.utmCampaign,
+              data.utmContent,
+              data.utmTerm
+            ]);
             
-            if (!utmString) {
-                showNotification('Please generate a UTM URL first');
-                return;
-            }
-
-            const campaignName = document.getElementById('utmCampaign').value;
-            const utmLog = document.getElementById('utmLog');
-            const newRow = document.createElement('tr');
+            return ContentService.createTextOutput(
+              JSON.stringify({ success: true, message: 'UTM saved successfully' })
+            ).setMimeType(ContentService.MimeType.JSON);
             
-            newRow.innerHTML = `
-                <td class="utm-actions">
-                    <button class="btn btn-sm btn-outline-primary me-2 small-btn" onclick="copyUTM(this)">💾</button>
-                    <button class="btn btn-sm btn-outline-danger small-btn" onclick="deleteUTM(this)">🚫</button>
-                </td>
-                <td>${timestamp}</td>
-                <td>${user.name}</td>
-                <td>${campaignName}</td>
-                <td class="utm-url" title="${utmString}">${utmString}</td>
-            `;
-            
-            utmLog.appendChild(newRow);
-            showNotification('UTM saved successfully');
-            utmLog.parentElement.scrollTop = utmLog.parentElement.scrollHeight;
+          } catch (error) {
+            return ContentService.createTextOutput(
+              JSON.stringify({ success: false, message: error.toString() })
+            ).setMimeType(ContentService.MimeType.JSON);
+          }
         }
 
         function copyUTM(button) {
