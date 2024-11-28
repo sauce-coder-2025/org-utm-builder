@@ -647,53 +647,164 @@
                        .replace(/\s+/g, '_')
                        .replace(/[^a-z0-9_-]/g, '');
         }
-        function endSession() {
-            const utmRows = document.querySelectorAll('#utmLog tr');
-            const endSaveButton = document.getElementById('endSaveButton');
-            const endSaveSpinner = document.getElementById('endSaveSpinner');
-            
-            if (utmRows.length === 0) {
-                showNotification('No UTMs to save. Please generate and save at least one UTM before ending session.');
+        function saveUTM() {
+            // Get user info
+            const user = JSON.parse(localStorage.getItem('utmBuilderUser'));
+            if (!user) {
+                showNotification('Please log in first');
                 return;
             }
         
-            // Show loading state
-            endSaveButton.disabled = true;
-            endSaveSpinner.style.display = 'inline-block';
+            // Get current date/time
+            const timestamp = new Date().toLocaleString();
+            
+            // Get the UTM string and check if it exists
+            const utmString = document.getElementById('generatedUtm').textContent;
+            if (!utmString) {
+                showNotification('Please generate a UTM URL first');
+                return;
+            }
         
-            // Collect UTM data
-            const utmData = Array.from(utmRows).map(row => ({
-                timestamp: row.cells[1].textContent,
-                creator: row.cells[2].textContent,
-                campaign: row.cells[3].textContent,
-                utmString: row.cells[4].getAttribute('title')
-            }));
+            // Collect all form data
+            const formData = {
+                timestamp: timestamp,
+                creator: user.name,
+                creatorEmail: user.email,
+                market: document.getElementById('market').value,
+                brand: document.getElementById('brand').value,
+                productCategory: document.getElementById('productCategory').value,
+                subCategory: document.getElementById('subCategory').value,
+                financialYear: document.getElementById('financialYear').value,
+                quarter: document.getElementById('quarter').value,
+                month: document.getElementById('month').value,
+                channel: document.getElementById('channel').value === 'other' ? 
+                        document.getElementById('otherChannel').value : 
+                        document.getElementById('channel').value,
+                channelType: document.getElementById('channelType').value,
+                mediaObjective: document.getElementById('mediaObjective').value,
+                buyType: document.getElementById('buyType').value,
+                baseUrl: document.getElementById('baseUrl').value,
+                campaignName: document.getElementById('campaignName').value,
+                adName: document.getElementById('adName').value,
+                utmString: utmString,
+                utmSource: document.getElementById('utmSource').value,
+                utmMedium: document.getElementById('utmMedium').value,
+                utmCampaign: document.getElementById('utmCampaign').value,
+                utmContent: document.getElementById('utmContent').value,
+                utmTerm: document.getElementById('utmTerm').value
+            };
         
-            // Send to Google Sheet
-            fetch('https://script.google.com/macros/s/AKfycbw981evD91sm2IP6NHdRNcG4BZlxOIns9Nrsl_zkWrGjWeZ2RkXRc19k6bfduwP1gEEow/exec', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ utms: utmData })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    clearForm();
-                    showNotification('UTMs saved successfully to Google Sheet!');
-                } else {
-                    showNotification('Error saving UTMs: ' + data.message);
-                }
-            })
-            .catch(error => {
-                showNotification('Error saving UTMs: ' + error.message);
-            })
-            .finally(() => {
-                // Reset loading state
-                endSaveButton.disabled = false;
-                endSaveSpinner.style.display = 'none';
+            // Add to local UTM log
+            const utmLog = document.getElementById('utmLog');
+            const newRow = document.createElement('tr');
+            
+            newRow.innerHTML = `
+                <td class="utm-actions">
+                    <button class="btn btn-sm btn-outline-primary me-2 small-btn" onclick="copyUTM(this)">💾</button>
+                    <button class="btn btn-sm btn-outline-danger small-btn" onclick="deleteUTM(this)">🚫</button>
+                </td>
+                <td>${timestamp}</td>
+                <td>${user.name}</td>
+                <td>${formData.campaignName}</td>
+                <td class="utm-url" title="${utmString}">${utmString}</td>
+            `;
+            
+            utmLog.appendChild(newRow);
+            utmLog.parentElement.scrollTop = utmLog.parentElement.scrollHeight;
+            showNotification('UTM saved successfully!');
+        }
+function endSession() {
+    const utmRows = document.querySelectorAll('#utmLog tr');
+    const endSaveButton = document.getElementById('endSaveButton');
+    const endSaveSpinner = document.getElementById('endSaveSpinner');
+    
+    if (utmRows.length === 0) {
+        showNotification('No UTMs to save. Please generate and save at least one UTM before ending session.');
+        return;
+    }
+
+    // Show loading state
+    endSaveButton.disabled = true;
+    endSaveSpinner.style.display = 'inline-block';
+
+    // Collect all UTM data with full details
+    const utmData = Array.from(utmRows).map(row => {
+        const user = JSON.parse(localStorage.getItem('utmBuilderUser'));
+        return {
+            timestamp: row.cells[1].textContent,
+            creator: row.cells[2].textContent,
+            creatorEmail: user.email,
+            market: document.getElementById('market').value,
+            brand: document.getElementById('brand').value,
+            productCategory: document.getElementById('productCategory').value,
+            subCategory: document.getElementById('subCategory').value,
+            financialYear: document.getElementById('financialYear').value,
+            quarter: document.getElementById('quarter').value,
+            month: document.getElementById('month').value,
+            channel: document.getElementById('channel').value === 'other' ? 
+                    document.getElementById('otherChannel').value : 
+                    document.getElementById('channel').value,
+            channelType: document.getElementById('channelType').value,
+            mediaObjective: document.getElementById('mediaObjective').value,
+            buyType: document.getElementById('buyType').value,
+            baseUrl: document.getElementById('baseUrl').value,
+            campaignName: document.getElementById('campaignName').value,
+            adName: document.getElementById('adName').value,
+            utmString: row.cells[4].getAttribute('title'),
+            utmSource: document.getElementById('utmSource').value,
+            utmMedium: document.getElementById('utmMedium').value,
+            utmCampaign: document.getElementById('utmCampaign').value,
+            utmContent: document.getElementById('utmContent').value,
+            utmTerm: document.getElementById('utmTerm').value
+        };
+    });
+
+    // Send to Google Apps Script webhook
+    fetch(process.env.WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Webhook-Secret': process.env.WEBHOOK_SECRET
+        },
+        body: JSON.stringify({ utms: utmData })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            clearForm();
+            showNotification('UTMs saved successfully to Google Sheet!');
+        } else {
+            showNotification('Error saving UTMs: ' + data.message);
+        }
+    })
+    .catch(error => {
+        showNotification('Error saving UTMs: ' + error.message);
+        console.error('Error:', error);
+    })
+    .finally(() => {
+        // Reset loading state
+        endSaveButton.disabled = false;
+        endSaveSpinner.style.display = 'none';
+    });
+}
+        function clearForm() {
+            // Clear all form fields
+            document.querySelectorAll('select, input').forEach(element => {
+                element.value = '';
             });
+            
+            // Clear UTM log
+            document.getElementById('utmLog').innerHTML = '';
+            
+            // Hide the generated UTM section
+            document.getElementById('generatedUtmSection').style.display = 'none';
+        
+            // Reset other channel div
+            document.getElementById('otherChannelDiv').style.display = 'none';
+            
+            // Reset UTM toggle
+            document.getElementById('manualUtmToggle').checked = false;
+            toggleManualUtm();
         }
 
         function generateUTM() {
