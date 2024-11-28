@@ -383,6 +383,25 @@
             'SG': ['F&P'],
             'GBL': ['F&P', 'Haier', 'Haier Home', 'Home Solutions', 'DCS']
         };
+        const subCategoryAbbr = {
+            'Refrigeration': 'REF',
+            'Wine': 'WINE',
+            'Chest Freezer': 'FREEZE',
+            'Ovens': 'OVEN',
+            'Cooktops': 'CTOP',
+            'Freestanding': 'FREE',
+            'Companions': 'COMP',
+            'Washing Machines': 'WASH',
+            'Dryers': 'DRY',
+            'Cabinets': 'CAB',
+            'Grills': 'GRILL',
+            'Carts': 'CART',
+            'Storage': 'STOR',
+            'Spare Parts': 'SPARE',
+            'Accessories': 'ACC',
+            'Water Filters': 'FILT',
+            'Cleaning': 'CLEAN'
+        };
 
         const channelDependencies = {
             'Meta': {
@@ -478,12 +497,48 @@
             }
         }
 
-        async function saveUTM() {
+        function saveUTM() {
+            // Get user info
             const user = JSON.parse(localStorage.getItem('utmBuilderUser'));
             if (!user) {
                 showNotification('Please log in first');
                 return;
             }
+        
+            // Get current date/time
+            const timestamp = new Date().toLocaleString();
+            
+            // Get the UTM string
+            const utmString = document.getElementById('generatedUtm').textContent;
+            if (!utmString) {
+                showNotification('Please generate a UTM URL first');
+                return;
+            }
+        
+            // Get campaign name
+            const campaignName = document.getElementById('utmCampaign').value;
+        
+            // Create table row
+            const utmLog = document.getElementById('utmLog');
+            const newRow = document.createElement('tr');
+            
+            newRow.innerHTML = `
+                <td class="utm-actions">
+                    <button class="btn btn-sm btn-outline-primary me-2 small-btn" onclick="copyUTM(this)">💾</button>
+                    <button class="btn btn-sm btn-outline-danger small-btn" onclick="deleteUTM(this)">🚫</button>
+                </td>
+                <td>${timestamp}</td>
+                <td>${user.name}</td>
+                <td>${campaignName}</td>
+                <td class="utm-url" title="${utmString}">${utmString}</td>
+            `;
+            
+            utmLog.appendChild(newRow);
+            showNotification('UTM saved successfully');
+        
+            // Scroll the UTM log to show the new entry
+            utmLog.parentElement.scrollTop = utmLog.parentElement.scrollHeight;
+        }
 
             // Collect form data
             const formData = {
@@ -757,10 +812,18 @@
         }
 
         function copyUTM(button) {
+            // This function should already exist in your code
             const utmString = button.closest('tr').querySelector('.utm-url').title;
             navigator.clipboard.writeText(utmString)
                 .then(() => showNotification('UTM copied to clipboard!'))
                 .catch(err => showNotification('Failed to copy UTM: ' + err.message));
+        }
+        
+        // Add this new function right after copyUTM
+        function deleteUTM(button) {
+            const row = button.closest('tr');
+            row.remove();
+            showNotification('UTM deleted successfully');
         }
 
         // Initialize event listeners
