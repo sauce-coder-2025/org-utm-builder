@@ -9,27 +9,23 @@
         body {
             background-color: #f8f9fa;
             padding: 20px;
-            min-width: 1200px;
         }
 
         .container {
             max-width: 1400px !important;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        /* Modified layout styles */
-        #app-container .row {
-            display: flex;
-            gap: 20px;
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;  /* Main form takes 1fr, UTM log fixed at 400px */
+            gap: 24px;
+            width: 100%;
         }
 
-        #app-container .col-md-8 {
-            flex: 0 0 auto;
-            width: 800px;
-        }
-
-        #app-container .col-md-4 {
-            flex: 1;
-            position: relative;
+        .main-form {
+            width: 100%;
         }
 
         .form-section {
@@ -40,18 +36,17 @@
             margin-bottom: 20px;
         }
 
-        .utm-log {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        .utm-log-panel {
             position: sticky;
             top: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             height: calc(100vh - 100px);
             overflow-y: auto;
         }
 
-        /* Your existing styles */
         .notification {
             position: fixed;
             top: 20px;
@@ -73,15 +68,13 @@
 
         .utm-table {
             width: 100%;
-            margin-top: 1rem;
+            margin-top: 15px;
         }
 
         .utm-table th {
             background-color: #f8f9fa;
-            padding: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #495057;
+            padding: 10px;
+            text-align: left;
             border-bottom: 2px solid #dee2e6;
         }
 
@@ -92,7 +85,6 @@
             white-space: nowrap;
         }
 
-        /* Additional utility styles */
         .form-label {
             margin-bottom: 0.5rem;
         }
@@ -102,8 +94,7 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
-        /* Animation keyframes */
+
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
