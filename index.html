@@ -35,7 +35,6 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             height: calc(100vh - 40px);
             overflow-y: auto;
-            width: 100%; 
         }
 
         .notification {
@@ -61,28 +60,58 @@
             border: none !important;
         }
 
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
         .utm-table {
             width: 100%;
             table-layout: fixed;
         }
-
-        .utm-table th,
-        .utm-table td {
-            padding: 8px;
-            border-bottom: 1px solid #dee2e6;
+        
+        /* Update column widths */
+        .utm-table th:nth-child(1), /* Actions column */
+        .utm-table td:nth-child(1) {
+            width: 100px;
+            min-width: 100px;
         }
-
-        .utm-table th {
-            background-color: #f8f9fa;
-            text-align: left;
+        
+        .utm-table th:nth-child(2), /* Campaign column */
+        .utm-table td:nth-child(2) {
+            width: 150px;
+            min-width: 150px;
         }
-
+        
+        .utm-table th:nth-child(3), /* UTM Source column */
+        .utm-table td:nth-child(3) {
+            width: 120px;
+            min-width: 120px;
+        }
+        
+        .utm-table th:nth-child(4), /* UTM Medium column */
+        .utm-table td:nth-child(4) {
+            width: 120px;
+            min-width: 120px;
+        }
+        
+        .utm-table th:nth-child(5), /* UTM Content column */
+        .utm-table td:nth-child(5) {
+            width: 120px;
+            min-width: 120px;
+        }
+        
+        .utm-table th:nth-child(6), /* UTM URL column */
+        .utm-table td:nth-child(6) {
+            min-width: 300px;
+        }
+        
         .utm-url {
-            max-width: none; /* Remove the fixed max-width */
-            width: 60%; /* Make it take up more space */
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            display: block;
         }
 
         @keyframes slideIn {
@@ -344,6 +373,9 @@
                                     <tr>
                                         <th>Actions</th>
                                         <th>Campaign</th>
+                                        <th>UTM Source</th>
+                                        <th>UTM Medium</th>
+                                        <th>UTM Content</th>
                                         <th>UTM URL</th>
                                     </tr>
                                 </thead>
@@ -682,24 +714,26 @@ function generateUTM() {
                 showNotification('Please log in first');
                 return;
             }
-
+        
             const utmString = document.getElementById('generatedUtm').textContent;
             if (!utmString) {
                 showNotification('Please generate a UTM URL first');
                 return;
             }
-
-            // Create new table row
+        
+            // Create new table row with additional columns
             const utmLog = document.getElementById('utmLog');
             const newRow = document.createElement('tr');
-            const timestamp = new Date().toLocaleString();
             
             newRow.innerHTML = `
                 <td>
-                    <button class="btn btn-sm btn-outline-primary me-2" onclick="copyUTM(this)">💾</button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUTM(this)">🚫</button>
+                    <button class="btn btn-sm btn-outline-primary me-2" onclick="copyUTM(this)">Copy</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUTM(this)">Delete</button>
                 </td>
                 <td>${document.getElementById('campaignName').value}</td>
+                <td>${document.getElementById('utmSource').value}</td>
+                <td>${document.getElementById('utmMedium').value}</td>
+                <td>${document.getElementById('utmContent').value}</td>
                 <td class="utm-url" title="${utmString}">${utmString}</td>
             `;
             
