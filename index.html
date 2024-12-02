@@ -812,7 +812,7 @@ function generateUTM() {
                 };
         
                 // Send to Google Apps Script
-                return fetch('{{ YOUR_WEBAPP_URL }}', {
+                return fetch('{{ WEBHOOK_URL }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
