@@ -6,15 +6,23 @@ on:
   pull_request:
     branches: [ main ]
 
+# Add permissions section
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v3  # Updated to v3
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
       
       - name: Setup Node.js
-        uses: actions/setup-node@v3  # Updated to v3
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
           
@@ -37,8 +45,9 @@ jobs:
           sed -i "s|{{ WEBHOOK_SECRET }}|$WEBHOOK_SECRET|g" dist/index.html
           
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4  # Updated to v4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Added token
           branch: gh-pages
           folder: dist
-          clean: true  # Automatically remove deleted files from the deploy branch
+          clean: true
