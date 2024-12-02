@@ -69,48 +69,62 @@
         .utm-table {
             width: 100%;
             table-layout: fixed;
+            border-collapse: collapse;
         }
         
-        /* Update column widths */
+        .utm-table th,
+        .utm-table td {
+            padding: 8px;
+            vertical-align: top;
+            word-wrap: break-word;  /* Enable word wrapping */
+            word-break: break-word; /* Prevent overflow */
+        }
+        
+        /* Specific column widths and behaviors */
         .utm-table th:nth-child(1), /* Actions column */
         .utm-table td:nth-child(1) {
-            width: 100px;
-            min-width: 100px;
+            width: 80px;
+            min-width: 80px;
         }
         
         .utm-table th:nth-child(2), /* Campaign column */
         .utm-table td:nth-child(2) {
             width: 150px;
             min-width: 150px;
+            white-space: normal; /* Allow text to wrap */
         }
         
-        .utm-table th:nth-child(3), /* UTM Source column */
+        .utm-table th:nth-child(3), /* UTM Source */
         .utm-table td:nth-child(3) {
-            width: 120px;
-            min-width: 120px;
+            width: 100px;
+            min-width: 100px;
+            white-space: normal;
         }
         
-        .utm-table th:nth-child(4), /* UTM Medium column */
+        .utm-table th:nth-child(4), /* UTM Medium */
         .utm-table td:nth-child(4) {
-            width: 120px;
-            min-width: 120px;
+            width: 100px;
+            min-width: 100px;
+            white-space: normal;
         }
         
-        .utm-table th:nth-child(5), /* UTM Content column */
+        .utm-table th:nth-child(5), /* UTM Content */
         .utm-table td:nth-child(5) {
             width: 120px;
             min-width: 120px;
+            white-space: normal;
         }
         
         .utm-table th:nth-child(6), /* UTM URL column */
         .utm-table td:nth-child(6) {
-            min-width: 300px;
+            min-width: 250px;
         }
         
+        /* Style for the URL cell specifically */
         .utm-url {
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: nowrap; /* Keep URLs on one line */
             display: block;
         }
 
@@ -727,8 +741,8 @@ function generateUTM() {
             
             newRow.innerHTML = `
                 <td>
-                    <button class="btn btn-sm btn-outline-primary me-2" onclick="copyUTM(this)">Copy</button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUTM(this)">Delete</button>
+                    <button class="btn btn-sm btn-outline-primary me-2" onclick="copyUTM(this)">💾</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUTM(this)">🚫</button>
                 </td>
                 <td>${document.getElementById('campaignName').value}</td>
                 <td>${document.getElementById('utmSource').value}</td>
