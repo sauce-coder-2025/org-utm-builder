@@ -779,6 +779,7 @@ function generateUTM() {
         
             // Create the data object for each UTM
             const utmData = Array.from(utmRows).map(row => ({
+                timestamp: new Date().toISOString(),  // Add timestamp
                 creator: {
                     name: user.name,
                     email: user.email
@@ -797,37 +798,40 @@ function generateUTM() {
                 mediaObjective: document.getElementById('mediaObjective').value,
                 buyType: document.getElementById('buyType').value,
                 baseUrl: document.getElementById('baseUrl').value,
-                campaignName: row.cells[1].textContent,
+                campaignName: row.cells[1].textContent, // Campaign column
                 adName: document.getElementById('adName').value,
                 utmString: row.querySelector('.utm-url').title,
-                utmSource: row.cells[2].textContent,
-                utmMedium: row.cells[3].textContent,
+                utmSource: document.getElementById('utmSource').value,
+                utmMedium: document.getElementById('utmMedium').value,
                 utmCampaign: document.getElementById('utmCampaign').value,
-                utmContent: row.cells[4].textContent,
+                utmContent: document.getElementById('utmContent').value,
                 utmTerm: document.getElementById('utmTerm').value,
-                secretKey: '{{ WEBHOOK_SECRET }}'  // This will be replaced by GitHub Actions
+                secretKey: '{{ WEBHOOK_SECRET }}'
             }));
         
-            // Send to Google Apps Script
-            fetch('{{ YOUR_WEBAPP_URL }}', {  // This will be replaced by GitHub Actions
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(utmData[0])  // Send first UTM for testing
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
+            // Send all UTMs to Google Apps Script
+            Promise.all(utmData.map(data => 
+                fetch('{{ YOUR_WEBAPP_URL }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+            ))
+            .then(results => {
+                const allSuccessful = results.every(result => result.success);
+                if (allSuccessful) {
                     clearForm();
-                    showNotification('UTMs saved successfully to Google Sheet!');
+                    showNotification('All UTMs saved successfully to Google Sheet!');
                 } else {
-                    showNotification('Error saving UTMs: ' + (data.error || 'Unknown error'));
+                    const errors = results.filter(r => !r.success).map(r => r.error).join(', ');
+                    showNotification('Error saving some UTMs: ' + errors);
                 }
             })
             .catch(error => {
