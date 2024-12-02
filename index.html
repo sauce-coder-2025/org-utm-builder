@@ -802,6 +802,7 @@ function generateUTM() {
                 utmString: row.querySelector('.utm-url').title,
                 utmSource: row.cells[2].textContent,
                 utmMedium: row.cells[3].textContent,
+                utmCampaign: document.getElementById('utmCampaign').value,
                 utmContent: row.cells[4].textContent,
                 utmTerm: document.getElementById('utmTerm').value,
                 secretKey: '{{ WEBHOOK_SECRET }}'  // This will be replaced by GitHub Actions
