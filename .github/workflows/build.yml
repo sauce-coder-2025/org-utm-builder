@@ -6,27 +6,26 @@ on:
   pull_request:
     branches: [ main ]
 
-# Add permissions section
 permissions:
   contents: write
   pages: write
   id-token: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    concurrency: ci-${{ github.ref }}
     
     steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-      
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
           
-      - name: Build site
+      - name: Build site 🔧
         env:
           WEBHOOK_URL: ${{ vars.WEBHOOK_URL }}
           WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
@@ -41,13 +40,16 @@ jobs:
           fi
           
           echo "Replacing environment variables..."
-          sed -i "s|{{ YOUR_WEBAPP_URL }}|$WEBHOOK_URL|g" dist/index.html
+          sed -i "s|{{ WEBHOOK_URL }}|$WEBHOOK_URL|g" dist/index.html
           sed -i "s|{{ WEBHOOK_SECRET }}|$WEBHOOK_SECRET|g" dist/index.html
           
-      - name: Deploy to GitHub Pages
+      - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # Added token
-          branch: gh-pages
           folder: dist
+          branch: gh-pages
           clean: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          single-commit: true
+          git-config-name: GitHub Actions
+          git-config-email: github-actions@github.com
