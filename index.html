@@ -817,9 +817,12 @@ function generateUTM() {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(data)
-                }).then(response => {
+                })
+                .then(async response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        // Get the error message from the response if possible
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                     }
                     return response.json();
                 })
