@@ -779,7 +779,7 @@ function generateUTM() {
         
             // Create the data object for each UTM
             const utmData = Array.from(utmRows).map(row => ({
-                timestamp: new Date().toISOString(),  // Add timestamp
+                timestamp: new Date().toISOString(),
                 creator: {
                     name: user.name,
                     email: user.email
@@ -798,7 +798,7 @@ function generateUTM() {
                 mediaObjective: document.getElementById('mediaObjective').value,
                 buyType: document.getElementById('buyType').value,
                 baseUrl: document.getElementById('baseUrl').value,
-                campaignName: row.cells[1].textContent, // Campaign column
+                campaignName: row.cells[1].textContent,
                 adName: document.getElementById('adName').value,
                 utmString: row.querySelector('.utm-url').title,
                 utmSource: document.getElementById('utmSource').value,
@@ -809,37 +809,48 @@ function generateUTM() {
                 secretKey: '{{ WEBHOOK_SECRET }}'
             }));
         
-            // Send all UTMs to Google Apps Script
-            Promise.all(utmData.map(data => 
-                fetch('{{ YOUR_WEBAPP_URL }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(async response => {
-                    if (!response.ok) {
-                        // Get the error message from the response if possible
-                        const errorText = await response.text();
-                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-                    }
-                    return response.json();
-                })
-            ))
-            .then(results => {
-                const allSuccessful = results.every(result => result.success);
-                if (allSuccessful) {
+            // Log the data being sent (for debugging)
+            console.log('Sending data:', utmData);
+        
+            // Send to Google Apps Script
+            fetch('{{ YOUR_WEBAPP_URL }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                mode: 'cors',
+                body: JSON.stringify(utmData[0])  // Send first UTM for testing
+            })
+            .then(async response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${responseText}`);
+                }
+        
+                try {
+                    return JSON.parse(responseText);
+                } catch (e) {
+                    throw new Error(`Invalid JSON response: ${responseText}`);
+                }
+            })
+            .then(data => {
+                console.log('Parsed response:', data);
+                if (data.success) {
                     clearForm();
-                    showNotification('All UTMs saved successfully to Google Sheet!');
+                    showNotification('UTMs saved successfully to Google Sheet!');
                 } else {
-                    const errors = results.filter(r => !r.success).map(r => r.error).join(', ');
-                    showNotification('Error saving some UTMs: ' + errors);
+                    showNotification('Error saving UTMs: ' + (data.error || 'Unknown error'));
                 }
             })
             .catch(error => {
+                console.error('Full error:', error);
                 showNotification('Error saving UTMs: ' + error.message);
-                console.error('Error:', error);
             })
             .finally(() => {
                 endSaveSpinner.style.display = 'none';
