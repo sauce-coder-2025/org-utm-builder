@@ -777,75 +777,78 @@ function generateUTM() {
                 return;
             }
         
-            // Create the data object for each UTM
-            const utmData = Array.from(utmRows).map(row => ({
-                timestamp: new Date().toISOString(),
-                creator: {
-                    name: user.name,
-                    email: user.email
-                },
-                market: document.getElementById('market').value,
-                brand: document.getElementById('brand').value,
-                productCategory: document.getElementById('productCategory').value,
-                subCategory: document.getElementById('subCategory').value,
-                financialYear: document.getElementById('financialYear').value,
-                quarter: document.getElementById('quarter').value,
-                month: document.getElementById('month').value,
-                channel: document.getElementById('channel').value === 'other' ? 
-                        document.getElementById('otherChannel').value : 
-                        document.getElementById('channel').value,
-                channelType: document.getElementById('channelType').value,
-                mediaObjective: document.getElementById('mediaObjective').value,
-                buyType: document.getElementById('buyType').value,
-                baseUrl: document.getElementById('baseUrl').value,
-                campaignName: row.cells[1].textContent,
-                adName: document.getElementById('adName').value,
-                utmString: row.querySelector('.utm-url').title,
-                utmSource: document.getElementById('utmSource').value,
-                utmMedium: document.getElementById('utmMedium').value,
-                utmCampaign: document.getElementById('utmCampaign').value,
-                utmContent: document.getElementById('utmContent').value,
-                utmTerm: document.getElementById('utmTerm').value,
-                secretKey: '{{ WEBHOOK_SECRET }}'
-            }));
+            // Process each UTM entry
+            Promise.all(Array.from(utmRows).map(row => {
+                // Create data object for each UTM
+                const data = {
+                    timestamp: new Date().toISOString(),
+                    creator: {
+                        name: user.name,
+                        email: user.email
+                    },
+                    market: document.getElementById('market').value,
+                    brand: document.getElementById('brand').value,
+                    productCategory: document.getElementById('productCategory').value,
+                    subCategory: document.getElementById('subCategory').value,
+                    financialYear: document.getElementById('financialYear').value,
+                    quarter: document.getElementById('quarter').value,
+                    month: document.getElementById('month').value,
+                    channel: document.getElementById('channel').value === 'other' ? 
+                            document.getElementById('otherChannel').value : 
+                            document.getElementById('channel').value,
+                    channelType: document.getElementById('channelType').value,
+                    mediaObjective: document.getElementById('mediaObjective').value,
+                    buyType: document.getElementById('buyType').value,
+                    baseUrl: document.getElementById('baseUrl').value,
+                    campaignName: row.cells[1].textContent,
+                    adName: document.getElementById('adName').value,
+                    utmString: row.querySelector('.utm-url').title,
+                    utmSource: document.getElementById('utmSource').value,
+                    utmMedium: document.getElementById('utmMedium').value,
+                    utmCampaign: document.getElementById('utmCampaign').value,
+                    utmContent: document.getElementById('utmContent').value,
+                    utmTerm: document.getElementById('utmTerm').value,
+                    secretKey: '{{ WEBHOOK_SECRET }}'
+                };
         
-            // Log the data being sent (for debugging)
-            console.log('Sending data:', utmData);
+                // Send to Google Apps Script
+                return fetch('{{ YOUR_WEBAPP_URL }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    mode: 'cors',
+                    body: JSON.stringify(data)
+                })
+                .then(async response => {
+                    const responseText = await response.text();
+                    console.log('Response status:', response.status);
+                    console.log('Response text:', responseText);
         
-            // Send to Google Apps Script
-            fetch('{{ YOUR_WEBAPP_URL }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                mode: 'cors',
-                body: JSON.stringify(utmData[0])  // Send first UTM for testing
-            })
-            .then(async response => {
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
-                
-                const responseText = await response.text();
-                console.log('Response text:', responseText);
+                    if (!response.ok) {
+                        if (response.status === 405) {
+                            throw new Error('Web App URL not properly configured. Please check Google Apps Script deployment.');
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${responseText}`);
+                    }
         
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}, message: ${responseText}`);
-                }
-        
-                try {
-                    return JSON.parse(responseText);
-                } catch (e) {
-                    throw new Error(`Invalid JSON response: ${responseText}`);
-                }
-            })
-            .then(data => {
-                console.log('Parsed response:', data);
-                if (data.success) {
+                    try {
+                        return JSON.parse(responseText);
+                    } catch (e) {
+                        console.error('JSON Parse Error:', e);
+                        throw new Error(`Invalid JSON response: ${responseText}`);
+                    }
+                });
+            }))
+            .then(results => {
+                const allSuccessful = results.every(result => result.success);
+                if (allSuccessful) {
                     clearForm();
-                    showNotification('UTMs saved successfully to Google Sheet!');
+                    showNotification('All UTMs saved successfully to Google Sheet!');
                 } else {
-                    showNotification('Error saving UTMs: ' + (data.error || 'Unknown error'));
+                    const errors = results.filter(r => !r.success).map(r => r.error).join(', ');
+                    showNotification('Error saving some UTMs: ' + errors);
                 }
             })
             .catch(error => {
