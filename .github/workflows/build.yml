@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3  # Updated to v3
       
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3  # Updated to v3
         with:
           node-version: '16'
           
@@ -23,14 +23,22 @@ jobs:
           WEBHOOK_URL: ${{ vars.WEBHOOK_URL }}
           WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
         run: |
+          echo "Creating distribution directory..."
           mkdir -p dist
+          
+          echo "Copying files..."
           cp index.html dist/
-          cp styles.css dist/ || true
-          sed -i "s|YOUR_WEBHOOK_URL|$WEBHOOK_URL|g" dist/index.html
-          sed -i "s|YOUR_WEBHOOK_SECRET|$WEBHOOK_SECRET|g" dist/index.html
+          if [ -f styles.css ]; then
+            cp styles.css dist/
+          fi
+          
+          echo "Replacing environment variables..."
+          sed -i "s|{{ YOUR_WEBAPP_URL }}|$WEBHOOK_URL|g" dist/index.html
+          sed -i "s|{{ WEBHOOK_SECRET }}|$WEBHOOK_SECRET|g" dist/index.html
           
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.4
+        uses: JamesIves/github-pages-deploy-action@v4  # Updated to v4
         with:
           branch: gh-pages
           folder: dist
+          clean: true  # Automatically remove deleted files from the deploy branch
