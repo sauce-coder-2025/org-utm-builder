@@ -808,11 +808,14 @@ function generateUTM() {
                     utmCampaign: document.getElementById('utmCampaign').value,
                     utmContent: document.getElementById('utmContent').value,
                     utmTerm: document.getElementById('utmTerm').value,
-                    secretKey: '{{ WEBHOOK_SECRET }}'
+                    secretKey: '{{ WEBHOOK_SECRET }}'  // Make sure this matches the yaml
                 };
         
+                console.log('Sending request to:', '{{ WEBHOOK_URL }}');  // Add logging
+                console.log('Data being sent:', data);  // Add logging
+        
                 // Send to Google Apps Script
-                return fetch('{{ WEBHOOK_URL }}', {
+                return fetch('{{ WEBHOOK_URL }}', {  // Make sure this matches the yaml
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
