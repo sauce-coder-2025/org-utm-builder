@@ -759,19 +759,83 @@ function generateUTM() {
 
         function endSession() {
             const utmRows = document.querySelectorAll('#utmLog tr');
+            const endSaveSpinner = document.getElementById('endSaveSpinner');
             
             if (utmRows.length === 0) {
                 showNotification('No UTMs to save. Please generate and save at least one UTM before ending session.');
                 return;
             }
-
-            document.getElementById('endSaveSpinner').style.display = 'inline-block';
-            
-            setTimeout(() => {
-                clearForm();
-                document.getElementById('endSaveSpinner').style.display = 'none';
-                showNotification('Session ended successfully!');
-            }, 1000);
+        
+            // Show loading state
+            endSaveSpinner.style.display = 'inline-block';
+        
+            // Get user info
+            const user = JSON.parse(localStorage.getItem('utmBuilderUser'));
+            if (!user) {
+                showNotification('Please log in first');
+                endSaveSpinner.style.display = 'none';
+                return;
+            }
+        
+            // Create the data object for each UTM
+            const utmData = Array.from(utmRows).map(row => ({
+                creator: {
+                    name: user.name,
+                    email: user.email
+                },
+                market: document.getElementById('market').value,
+                brand: document.getElementById('brand').value,
+                productCategory: document.getElementById('productCategory').value,
+                subCategory: document.getElementById('subCategory').value,
+                financialYear: document.getElementById('financialYear').value,
+                quarter: document.getElementById('quarter').value,
+                month: document.getElementById('month').value,
+                channel: document.getElementById('channel').value === 'other' ? 
+                        document.getElementById('otherChannel').value : 
+                        document.getElementById('channel').value,
+                channelType: document.getElementById('channelType').value,
+                mediaObjective: document.getElementById('mediaObjective').value,
+                buyType: document.getElementById('buyType').value,
+                baseUrl: document.getElementById('baseUrl').value,
+                campaignName: row.cells[1].textContent,
+                adName: document.getElementById('adName').value,
+                utmString: row.querySelector('.utm-url').title,
+                utmSource: row.cells[2].textContent,
+                utmMedium: row.cells[3].textContent,
+                utmContent: row.cells[4].textContent,
+                utmTerm: document.getElementById('utmTerm').value,
+                secretKey: '{{ WEBHOOK_SECRET }}'  // This will be replaced by GitHub Actions
+            }));
+        
+            // Send to Google Apps Script
+            fetch('{{ YOUR_WEBAPP_URL }}', {  // This will be replaced by GitHub Actions
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(utmData[0])  // Send first UTM for testing
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    clearForm();
+                    showNotification('UTMs saved successfully to Google Sheet!');
+                } else {
+                    showNotification('Error saving UTMs: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                showNotification('Error saving UTMs: ' + error.message);
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                endSaveSpinner.style.display = 'none';
+            });
         }
 // Utility Functions
         function showNotification(message, duration = 3000) {
