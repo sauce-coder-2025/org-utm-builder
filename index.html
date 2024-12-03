@@ -771,6 +771,7 @@ function generateUTM() {
         
             // Get user info
             const user = JSON.parse(localStorage.getItem('utmBuilderUser'));
+            console.log(user,'checking_user_detail');
             if (!user) {
                 showNotification('Please log in first');
                 endSaveSpinner.style.display = 'none';
