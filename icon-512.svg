@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Label background - removed fill from outside area -->
+  <path d="M40 128 L360 128 L472 256 L360 384 L40 384 Z" 
+        fill="#f4d03f"
+        stroke="#c9a63c"
+        stroke-width="24"/>
+  
+  <!-- Hole for string -->
+  <circle cx="80" cy="256" r="32" 
+          fill="#e5b827"
+          stroke="#c9a63c"
+          stroke-width="16"/>
+</svg>
